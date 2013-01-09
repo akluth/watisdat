@@ -28,6 +28,20 @@ VirtualMachine = require('./vm');
 
 var content;
 
+if ((argv.version)) {
+    log.message("0.1.0");
+    process.exit();
+}
+
+if ((argv.help)) {
+    log.message("\n Usage: watisdat (--file=FILE)\n");
+    log.message(" --file=FILE - Open file to interprete");
+    log.message(" --debug     - Enable debug messages");
+    log.message(" --help      - Display this help");
+    log.message(" --version   - Display versioning information\n");
+    process.exit();
+}
+
 if ((argv.debug)) {
     config.debug = true;
 }
