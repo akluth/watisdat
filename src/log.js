@@ -75,7 +75,7 @@ function message(str) {
 }
 
 function data(str) {
-    console.log(str.toString().bold.data);
+    process.stdout.write(str.toString().bold.data);
 }
 
 function glitzer(str) {

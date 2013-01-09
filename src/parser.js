@@ -45,7 +45,9 @@ Parser.prototype.lexer = function() {
             this._raw[i] === '+' ||
             this._raw[i] === '-' ||
             this._raw[i] === '.' ||
-            this._raw[i] === ',') {
+            this._raw[i] === ',' ||
+            this._raw[i] === '[' ||
+            this._raw[i] === ']') {
             temp += this._raw[i];
         }
     }

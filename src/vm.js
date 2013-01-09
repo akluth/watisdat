@@ -24,10 +24,11 @@ log = require('./log');
 var _code;
 var _heap;
 var _pointer;
-
+var _level;
 
 function VirtualMachine() {
     this._pointer = 0;
+    this._level = 0;
 }
 
 
@@ -43,13 +44,14 @@ VirtualMachine.prototype.create = function(heap) {
 
 
 VirtualMachine.prototype.run = function(code) {
-    this._code = code;
+    this._code = code.join('');
+    var ip;
     var self = this;
 
     log.debug('Executing code, size ' + this._code.length);
 
-    this._code.forEach(function(token) {
-        switch (token) {
+    for (ip = 0; ip < self._code.length; ip++) {
+        switch (self._code.charAt(ip)) {
             case '>':
                 self._pointer++;
                 break;
@@ -65,10 +67,35 @@ VirtualMachine.prototype.run = function(code) {
             case '.':
                 log.data(String.fromCharCode(self._heap[self._pointer]));
                 break;
+            case '[':
+                if (self._heap[self._pointer] === 0) {
+                    for (ip++; self._level > 0 || self._code.charAt(ip) != ']'; ip++) {
+                        if (self._code.charAt(ip) == '[') {
+                            self._level++;
+                        }
+
+                        if (self._code.charAt(ip) == ']') {
+                            self._level--;
+                        }
+                    }
+                }
+                break;
+            case ']':
+                for (ip--; self._level > 0 || self._code.charAt(ip) != '['; ip--) {
+                    if (self._code.charAt(ip) == ']') {
+                        self._level++;
+                    }
+
+                    if (self._code.charAt(ip) == '[') {
+                        self._level--;
+                    }
+                }
+                ip--;
+                break;
             default:
                 break;
         }
-    });
+    }
 
     log.debug('Done.');
 };
