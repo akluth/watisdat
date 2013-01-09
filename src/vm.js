@@ -19,17 +19,28 @@
  * FROM,  OUT OF  OR IN CONNECTION  WITH THE  SOFTWARE  OR THE  USE OR  OTHER *
  * DEALINGS IN THE SOFTWARE.                                                  *
  ******************************************************************************/
+log = require('./log');
 
+var _code;
 var _heap;
 var _pointer;
 
+
 function VirtualMachine() {
-    console.log("wat yay vm");
 }
+
 
 VirtualMachine.prototype.create = function(heap) {
     this._heap = new Array(heap);
-    console.log(this._heap.length);
+    log.debug('Created virtual machine with heap size ' + this._heap.length);
+};
+
+
+VirtualMachine.prototype.run = function(code) {
+    this._code = code;
+
+    log.debug('Executing code, size ' + this._code.length);
+    log.debug('Done.');
 };
 
 module.exports = VirtualMachine;

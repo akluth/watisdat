@@ -35,7 +35,7 @@ Parser.prototype.preprocess = function() {
     this._content = this._content.replace(/(\r\n|\n|\r)/gm, '');
     this._content = this._content.replace(/\s+/g, '');
     this._raw = this._content.split('');
-    log.debug('preprocessed content: ' + this._raw);
+    log.debug('Preprocessed content: ' + this._raw);
 };
 
 
@@ -57,7 +57,10 @@ Parser.prototype.parse = function() {
 
     if (num_opened_brackets !== num_closed_brackets) {
         log.failure("Parsing error: Unclosed loop ([])");
+        return false;
     }
+
+    return this._raw;
 };
 
 module.exports = Parser;

@@ -27,6 +27,9 @@ var argv = require('optimist').argv;
 Parser = require('./parser');
 log = require('./log');
 config = require('./config');
+VirtualMachine = require('./vm');
+
+var content;
 
 if ((argv.debug)) {
     config.debug = true;
@@ -34,15 +37,25 @@ if ((argv.debug)) {
 
 if ((argv.file)) {
     try {
-        var content = fs.readFileSync(argv.file, 'utf8');
+        content = fs.readFileSync(argv.file, 'utf8');
     } catch (e) {
-        //TODO: Log
         log.failure(e);
         process.exit();
     }
+} else {
+   log.warn("prompt lol");
+   content = "++++++";
+}
+
+if ((argv.heap)) {
+    config.vm.heap = argv.heap;
 }
 
 var parser = new Parser(content);
 parser.preprocess();
-parser.parse();
+content = parser.parse();
+
+var vm = new VirtualMachine();
+vm.create(config.vm.heap);
+vm.run(content);
 

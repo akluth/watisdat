@@ -21,6 +21,9 @@
  ******************************************************************************/
 module.exports = config = {
     'debug': false,
-    'colors': true
+    'colors': true,
+    'vm': {
+        'heap': 4069
+    }
 };
 
