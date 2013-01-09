@@ -1,4 +1,5 @@
 *.swp
+*.bf
 *.store
 node_modules/ 
 test/
