@@ -1,0 +1,6 @@
+*.swp
+*.store
+node_modules/ 
+test/
+src/config.js
+template.sh
