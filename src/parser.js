@@ -30,11 +30,28 @@ function Parser(content) {
 }
 
 
-Parser.prototype.preprocess = function() {
+Parser.prototype.lexer = function() {
     // Delete all kinds of newlines from the input + all spaces
     this._content = this._content.replace(/(\r\n|\n|\r)/gm, '');
     this._content = this._content.replace(/\s+/g, '');
     this._raw = this._content.split('');
+
+    var temp = '';
+
+    // Extract all non-brainfuck commands
+    for (var i = 0; i < this._raw.length; i++) {
+        if (this._raw[i] === '>' || 
+            this._raw[i] === '<' ||
+            this._raw[i] === '+' ||
+            this._raw[i] === '-' ||
+            this._raw[i] === '.' ||
+            this._raw[i] === ',') {
+            temp += this._raw[i];
+        }
+    }
+
+    this._raw = temp.split('');
+
     log.debug('Preprocessed content: ' + this._raw);
 };
 

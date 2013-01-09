@@ -27,19 +27,49 @@ var _pointer;
 
 
 function VirtualMachine() {
+    this._pointer = 0;
 }
 
 
 VirtualMachine.prototype.create = function(heap) {
     this._heap = new Array(heap);
+   
+    for (var i = 0; i < this._heap.length; i++) {
+        this._heap[i] = 0;
+    }
+
     log.debug('Created virtual machine with heap size ' + this._heap.length);
 };
 
 
 VirtualMachine.prototype.run = function(code) {
     this._code = code;
+    var self = this;
 
     log.debug('Executing code, size ' + this._code.length);
+
+    this._code.forEach(function(token) {
+        switch (token) {
+            case '>':
+                self._pointer++;
+                break;
+            case '<':
+                self._pointer--;
+                break;
+            case '+':
+                self._heap[self._pointer]++;
+                break;
+            case '-':
+                self._heap[self._pointer]--;
+                break;
+            case '.':
+                log.data(String.fromCharCode(self._heap[self._pointer]));
+                break;
+            default:
+                break;
+        }
+    });
+
     log.debug('Done.');
 };
 

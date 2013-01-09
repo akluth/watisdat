@@ -52,7 +52,7 @@ if ((argv.heap)) {
 }
 
 var parser = new Parser(content);
-parser.preprocess();
+parser.lexer();
 content = parser.parse();
 
 var vm = new VirtualMachine();
