@@ -1,7 +1,5 @@
-#!/usr/bin/env node
 /******************************************************************************
  * Copyright (c) 2013 Alexander Kluth <derhartmut@niwohlos.org>               *
- * Copyright (c) 2013 Sandra Bedorf <s.bedorf@gmx.de>                         *
  *                                                                            *
  * This file is part of watisdat.                                             *
  *                                                                            *
@@ -18,64 +16,45 @@
  * You should have received a copy of the GNU General Public License          *
  * along with watisdat.  If not, see <http://www.gnu.org/licenses/>.          *
  ******************************************************************************/
-fs = require('fs');
-var argv = require('optimist').argv;
-
+cmd = require('commander');
 log = require('./log');
 config = require('./config');
 
-Cli = require('./cli');
-Parser = require('./parser');
 VirtualMachine = require('./vm');
-PreProcessor = require('./preprocessor');
 
-var content;
+var _code;
+var _heap;
+var vm;
 
-if ((argv.version)) {
-    log.message("0.1.0");
-    process.exit();
+
+function Cli() {
 }
 
-if ((argv.help)) {
-    log.message("\n Usage: watisdat (--file=FILE)\n");
-    log.message(" --file=FILE - Open file to interprete");
-    log.message(" --debug     - Enable debug messages");
-    log.message(" --help      - Display this help");
-    log.message(" --version   - Display versioning information\n");
-    process.exit();
-}
 
-if ((argv.debug)) {
-    config.debug = true;
-}
+Cli.prototype.run = function() {
+    this.vm = new VirtualMachine();
+    this.vm.create(config.vm.heap);
 
-if ((argv.heap)) {
-    config.vm.heap = argv.heap;
-}
+    this.prompt();
+};
 
-if ((argv.file)) {
-    try {
-        content = fs.readFileSync(argv.file, 'utf8');
-    } catch (e) {
-        log.failure(e);
-        process.exit();
-    }
 
-    var preprocessor = new PreProcessor();
-    preprocessor.process(content);
+Cli.prototype.prompt = function() {
+    var self = this;
+    cmd.prompt('[' + this.vm.getCellPointer() + '] > ', function(data) {
+        self.parse(data);
 
-    var parser = new Parser(content);
-    parser.lexer();
-    content = parser.parse();
+        //TODO: Recursion, recursion, recursion...not the best solution.
+        self.prompt();
+    });
+};
 
-    if (content === false) {
-        process.exit();
-    }
 
-    var vm = new VirtualMachine();
-    vm.create(config.vm.heap);
-    vm.run(content);
-} else {
-    var cli = new Cli();
-    cli.run();
-}
+Cli.prototype.parse = function(data) {
+    this.vm.run(data);
+    log.data('\n');
+};
+
+
+module.exports = Cli;
+

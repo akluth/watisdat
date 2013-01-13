@@ -41,7 +41,8 @@ VirtualMachine.prototype.create = function(heap) {
 
 
 VirtualMachine.prototype.run = function(code) {
-    this._code = code.join('');
+//    this._code = code.join('');
+    this._code = code;
     var ip;
     var self = this;
 
@@ -96,5 +97,10 @@ VirtualMachine.prototype.run = function(code) {
 
     log.debug('Done.');
 };
+
+
+VirtualMachine.prototype.getCellPointer = function() {
+    return this._pointer;
+}
 
 module.exports = VirtualMachine;

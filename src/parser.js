@@ -76,7 +76,7 @@ Parser.prototype.parse = function() {
         return false;
     }
 
-    return this._raw;
+    return this._raw.join('');
 };
 
 module.exports = Parser;
