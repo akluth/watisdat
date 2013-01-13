@@ -1,7 +1,5 @@
-#!/usr/bin/env node
 /******************************************************************************
  * Copyright (c) 2013 Alexander Kluth <derhartmut@niwohlos.org>               *
- * Copyright (c) 2013 Sandra Bedorf <s.bedorf@gmx.de>                         *
  *                                                                            *
  * This file is part of watisdat.                                             *
  *                                                                            *
@@ -18,60 +16,25 @@
  * You should have received a copy of the GNU General Public License          *
  * along with watisdat.  If not, see <http://www.gnu.org/licenses/>.          *
  ******************************************************************************/
-fs = require('fs');
-var argv = require('optimist').argv;
-
-Parser = require('./parser');
 log = require('./log');
 config = require('./config');
-VirtualMachine = require('./vm');
-PreProcessor = require('./preprocessor');
 
-var content;
 
-if ((argv.version)) {
-    log.message("0.1.0");
-    process.exit();
-}
-
-if ((argv.help)) {
-    log.message("\n Usage: watisdat (--file=FILE)\n");
-    log.message(" --file=FILE - Open file to interprete");
-    log.message(" --debug     - Enable debug messages");
-    log.message(" --help      - Display this help");
-    log.message(" --version   - Display versioning information\n");
-    process.exit();
-}
-
-if ((argv.debug)) {
-    config.debug = true;
-}
-
-if ((argv.file)) {
-    try {
-        content = fs.readFileSync(argv.file, 'utf8');
-    } catch (e) {
-        log.failure(e);
-        process.exit();
-    }
-} else {
-   log.warn("prompt lol");
-   content = "++++++";
-}
-
-if ((argv.heap)) {
-    config.vm.heap = argv.heap;
+function PreProcessor() {
 }
 
 
-var preprocessor = new PreProcessor();
-preprocessor.process(content);
+PreProcessor.prototype.process = function(data) {
+    data = data.split('\n');
+    data.forEach(function(line) {
+        if (line.indexOf('$heap') !== -1) {
+            var temp = line.split(' ');
+            config.vm.heap = parseInt(temp[1]);
+            log.debug('pragma $heap detected, using heap size of ' + temp[1] + ' cells');
+        }
 
-var parser = new Parser(content);
-parser.lexer();
-content = parser.parse();
+    });
+};
 
-var vm = new VirtualMachine();
-vm.create(config.vm.heap);
-vm.run(content);
 
+module.exports = PreProcessor;
